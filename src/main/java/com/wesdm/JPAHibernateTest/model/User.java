@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -28,8 +29,8 @@ public class User {
 					@org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
 					@org.hibernate.annotations.Parameter(name = "increment_size", value = "25"),
 					@org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled-lo") })
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
-	// @SequenceGenerator(name = "sequence_generator", sequenceName = "users_seq", allocationSize = 5)
+//	 @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
+//	 @SequenceGenerator(name = "sequence_generator", sequenceName = "users_seq", allocationSize = 25)
 	protected Long id;
 
 	// DO WE NEED MAP THE FOLLOWING IF WE CAN WRITE QUERIES TO GET THEM?
@@ -39,8 +40,8 @@ public class User {
 	// @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY)
 	// protected Set<Item> itemsForAuction = new HashSet<>();
 	//
-	 @OneToMany(mappedBy = "buyer", fetch = FetchType.LAZY)
-	 protected Set<Item> boughtItems = new HashSet<>();
+//	 @OneToMany(mappedBy = "buyer", fetch = FetchType.LAZY)
+//	 protected Set<Item> boughtItems = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -117,9 +118,9 @@ public class User {
 	// item.setSeller(null);
 	// }
 	
-	public void buyItem(Item item) {
-		item.setBuyer(this);
-		this.boughtItems.add(item);
-	}
+//	public void buyItem(Item item) {
+//		item.setBuyer(this);
+//		this.boughtItems.add(item);
+//	}
 	// ...
 }

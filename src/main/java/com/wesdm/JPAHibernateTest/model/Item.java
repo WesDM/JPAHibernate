@@ -23,7 +23,7 @@ import javax.persistence.OrderColumn;
 @Entity
 public class Item {
 
-	@Id
+	@Id			//designates PK
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR_POOLED")
 	@org.hibernate.annotations.GenericGenerator(name = "ID_GENERATOR_POOLED", strategy = "enhanced-sequence",
 			parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "item_seq"),
