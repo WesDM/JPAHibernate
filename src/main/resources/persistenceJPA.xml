@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+      http://www.springframework.org/schema/jdbc
+      http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+      http://www.springframework.org/schema/tx 
+      http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+	<context:property-placeholder location="classpath:dbexample.properties" />
+
+	<context:component-scan base-package="com.wesdm" />
+
+
+	<bean id="emf"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.wesdm" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql:false}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql:false}</prop>
+				<prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop>
+				<prop key="hibernate.order_inserts">${hibernate.order_inserts}</prop>
+				<prop key="hibernate.order_updates">${hibernate.order_updates}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="h2WebServer" class="org.h2.tools.Server" factory-method="createWebServer"
+		init-method="start" destroy-method="stop">
+		<constructor-arg value="-web,-webAllowOthers,-webDaemon,-webPort,8082" />
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>				<!-- this is property DI example in XML -->
+	</bean>
+
+	<!-- JNDI lookup to obtain data source. Good for production. Pooled connections. -->
+	<!-- <jee:jndi-lookup id="dataSource" jndi-name="/jdbc/SpitterDS" -->
+	<!-- resource-ref="true" /> -->
+
+	<!-- Good for testing purposes -->
+	<!-- <jdbc:embedded-database id="dataSource" type="H2"> -->
+	<!-- <jdbc:script location="classpath:db-schema.sql" /> -->
+	<!-- <jdbc:script location="classpath:db-test-data.sql" /> -->
+	<!-- </jdbc:embedded-database> -->
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="emf" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- Translate sql excpetion to one of Sping Data Access Expection -->
+	<bean id="persistenceExceptionTranslationPostProcessor"
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+</beans>
