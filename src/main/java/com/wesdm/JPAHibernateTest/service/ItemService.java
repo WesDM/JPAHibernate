@@ -33,7 +33,7 @@ public class ItemService {
 		this.userDao = userDao;
 	}
 	
-	public void batchInsertItems(int batchSize, int totalUsers) {
+	public void batchInsert(int batchSize, int totalUsers) {
 		//LOGGER.info(env.getProperty("hibernate.jdbc.fetch_size"));
 		
 

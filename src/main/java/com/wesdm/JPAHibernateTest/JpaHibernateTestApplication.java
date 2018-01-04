@@ -24,10 +24,11 @@ public class JpaHibernateTestApplication {
 		final long startTime = System.currentTimeMillis();
 		int batchSize = 25;
 		int numOfEntities = 100;
-		userService.batchInsertUsers(batchSize,numOfEntities);
-		itemService.batchInsertItems(batchSize, numOfEntities);
-		Item item = itemService.getItemWithBids(1L);
-		itemService.placeBid(item, BigDecimal.valueOf(3.50), 1L);
+		//userService.batchInsert(batchSize,numOfEntities);
+		userService.batchInsertJdbc(batchSize, numOfEntities);
+		//itemService.batchInsert(batchSize, numOfEntities);
+		//Item item = itemService.getItemWithBids(1L);
+		//itemService.placeBid(item, BigDecimal.valueOf(3.50), 1L);
 		final long endTime = System.currentTimeMillis();
 
 		LOGGER.info("Total execution time: " + (endTime - startTime));

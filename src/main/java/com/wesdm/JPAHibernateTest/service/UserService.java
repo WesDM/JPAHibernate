@@ -1,9 +1,6 @@
 package com.wesdm.JPAHibernateTest.service;
 
-import java.util.Map;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,11 +9,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.wesdm.JPAHibernateTest.dao.UserDao;
 import com.wesdm.JPAHibernateTest.model.Address;
 import com.wesdm.JPAHibernateTest.model.User;
 
 @Service
+@Transactional
 public class UserService {
 	Logger LOGGER = LogManager.getLogger(UserService.class);	    
 	
@@ -31,8 +30,8 @@ public class UserService {
 		this.userDao = userDao;
 	}
 	
-	@Transactional
-	public void batchInsertUsers(int batchSize, int totalUsers) {
+	
+	public void batchInsert(int batchSize, int totalUsers) {
 		//LOGGER.info(env.getProperty("hibernate.jdbc.fetch_size"));
 		
 		
@@ -53,5 +52,17 @@ public class UserService {
 	
 	public UserDao getUserDao() {
 		return userDao;
+	}
+	
+	public void batchInsertJdbc(int batchSize, int totalUsers) {
+		List<User> users = Lists.newArrayList();
+		for(int i = 1; i <= totalUsers; i++) {
+			User user = new User();
+			user.setUsername("USERNAME"+i);
+			user.setBillingAddress(new Address("SESAME ST", "10108", "NY"));
+			user.setHomeAddress(new Address("SESAME ST", "10108", "NY"));
+			users.add(user);
+		}
+		userDao.batchInsertJDBC(users, batchSize);
 	}
 }
