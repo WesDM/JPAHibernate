@@ -1,7 +1,9 @@
 package com.wesdm.JPAHibernateTest.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,34 +23,35 @@ import com.wesdm.JPAHibernateTest.model.Item;
 @Transactional
 public class ItemService {
 	private static final Logger LOGGER = LogManager.getLogger(ItemService.class);
-	
+
 	private ItemDao itemDao;
 	private BidDao bidDao;
 	private UserDao userDao;
-	
+
 	@Autowired
 	public ItemService(ItemDao itemDao, BidDao bidDao, UserDao userDao) {
 		this.itemDao = itemDao;
 		this.bidDao = bidDao;
 		this.userDao = userDao;
 	}
-	
-	public void batchInsert(int batchSize, int totalUsers) {
-		//LOGGER.info(env.getProperty("hibernate.jdbc.fetch_size"));
-		
 
-		for(int i = 1; i <= totalUsers; i++) {
+	public void batchInsert(int batchSize, int totalUsers) {
+		// LOGGER.info(env.getProperty("hibernate.jdbc.fetch_size"));
+
+		for (int i = 1; i <= totalUsers; i++) {
 			Set<Image> images = new HashSet<>();
-			Image image = new Image("title"+i,"filename"+i,i,i);
+			Image image = new Image("title" + i, "filename" + i, i, i);
 			images.add(image);
-			image = new Image("title0"+i,"filename0"+i,i,i);
+			image = new Image("title0" + i, "filename0" + i, i, i);
 			images.add(image);
 			Item item = new Item();
 			item.setName("Record");
 			item.setSeller(userDao.findReferenceById((long) i));
 			item.setImages(images);
+			item.setAuctionStart(LocalDateTime.now());
+			item.setAuctionEnd(LocalDateTime.now().plusDays(1));
 			itemDao.makePersistent(item);
-			if(i % batchSize == 0) {
+			if (i % batchSize == 0) {
 				itemDao.getEntityManager().flush();
 				itemDao.getEntityManager().clear();
 			}
@@ -56,20 +59,41 @@ public class ItemService {
 		itemDao.getEntityManager().flush();
 		itemDao.getEntityManager().clear();
 	}
-	
+
 	public void placeBid(Item item, BigDecimal bidAmount, Long userId) {
-		item = itemDao.getEntityManager().merge(item);
-		Bid bid = item.placeBid(bidDao.getHighestBidAmount(item), bidAmount);
-		bid.setBidder(userDao.findById(userId));
-		item.addBid(bid);
-		LOGGER.info("place bid finished");
+		if (!item.hasAuctionEnded()) {
+			item = itemDao.getEntityManager().merge(item);
+			Bid bid = item.placeBid(bidDao.getHighestBidAmount(item), bidAmount);
+			if (bid == null) {
+				LOGGER.info("Bid was too low");
+				return;
+			}
+			bid.setBidder(userDao.findReferenceById(userId));
+			item.addBid(bid);
+			LOGGER.info("place bid finished");
+		}
+		else {
+		LOGGER.info("auction has ended");
+		}
 	}
-	
+
 	public Item getItem(Long id) {
 		return itemDao.findById(id);
 	}
-	
+
 	public Item getItemWithBids(Long id) {
 		return itemDao.findByIdWithBids(id);
+	}
+	
+	public void endAuction(Item item) {
+		item = itemDao.getEntityManager().merge(item);
+		item.setBuyer(bidDao.getHighestBidder(item));
+	}
+	
+	//made to test with Item.Bids @BatchSize enabled
+	public void logBidAmounts() {
+		Set<Item> items = new LinkedHashSet<Item>(itemDao.findAllWithBidsHql());
+		for(Item item : items)
+			LOGGER.info(item.getBids().size());
 	}
 }

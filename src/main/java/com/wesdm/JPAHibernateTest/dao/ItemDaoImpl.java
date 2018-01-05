@@ -9,13 +9,14 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import com.wesdm.JPAHibernateTest.model.Bid;
 import com.wesdm.JPAHibernateTest.model.Item;
 import com.wesdm.JPAHibernateTest.model.ItemBidSummary;
 
-@Repository
+@Repository("itemDao")
 public class ItemDaoImpl extends GenericDaoImpl<Item, Long> implements ItemDao {
 
 	public ItemDaoImpl() {
@@ -31,7 +32,12 @@ public class ItemDaoImpl extends GenericDaoImpl<Item, Long> implements ItemDao {
 				.orderBy(cb.asc(i.get("auctionEnd")));
 		if (withBids)
 			i.fetch("bids", JoinType.LEFT);
-		return em.createQuery(criteria).getResultList();
+		return em.createQuery(criteria).setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false).getResultList();
+	}
+	
+	@Override
+	public List<Item> findAllWithBidsHql(){
+		return em.createQuery("select i from Item i inner join i.bids").getResultList();
 	}
 	
 	@Override

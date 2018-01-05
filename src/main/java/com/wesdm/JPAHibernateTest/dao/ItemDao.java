@@ -15,6 +15,8 @@ public interface ItemDao extends GenericDao<Item, Long> {
 
 	Item findByIdWithBids(Long id);
 
+	List<Item> findAllWithBidsHql();
+
 }
 
 //public interface ItemDao extends JpaRepository<Item, Long>{

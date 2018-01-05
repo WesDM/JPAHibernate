@@ -14,20 +14,13 @@ import com.wesdm.JPAHibernateTest.model.User;
 @Repository
 public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
 	
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	//@Autowired
-	public UserDaoImpl(JdbcTemplate jdbcTemplate) {
+	@Autowired
+	public UserDaoImpl(JdbcTemplate t) {
 		super(User.class);
-		this.jdbcTemplate = jdbcTemplate;
+		this.jdbcTemplate = t;
 	}
-
-//	@Override
-//	public void batchInsertJDBC(List<User> users) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 	
 	@Override
 	public int[][] batchInsertJDBC(List<User> users, int batchSize) {

@@ -1,6 +1,7 @@
 package com.wesdm.JPAHibernateTest.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,10 +16,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
+
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 public class Item {
@@ -42,7 +44,8 @@ public class Item {
 	//@OrderBy("filename, width DESC")  //executed at sql level, ordered in DB
 	@AttributeOverride(name = "filename", column = @Column(name = "FNAME", nullable = false))
 	private Set<Image> images = new HashSet<Image>();
-
+	
+	//@BatchSize(size=2)
 	@OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Bid> bids = new HashSet<>();
 
@@ -64,6 +67,20 @@ public class Item {
 //			inverseJoinColumns = @JoinColumn(name = "BUYER_ID"))
 	private User buyer;
 	// JoinTable hides the table from app view..no Java class. Good choice to avoid null columns
+	
+	@Column(name = "AUCTION_START")
+	private LocalDateTime auctionStart;
+	
+	@Column(name = "AUCTION_END")
+	private LocalDateTime auctionEnd;
+	
+	@Column(name = "CREATED_ON", updatable = false)
+	@org.hibernate.annotations.CreationTimestamp
+	private LocalDateTime created;
+
+	@Column(name = "MODIFIED_ON")
+	@org.hibernate.annotations.UpdateTimestamp
+	private LocalDateTime updated;
 
 
 	public Item() {
@@ -108,8 +125,6 @@ public class Item {
 		return null;
 	}
 
-	// ...
-
 	public Set<Image> getImages() {
 		return images;
 	}
@@ -140,5 +155,33 @@ public class Item {
 
 	public void setBuyer(User buyer) {
 		this.buyer = buyer;
+	}
+
+	public boolean hasAuctionEnded() {
+		return auctionEnd.isBefore(LocalDateTime.now());
+	}
+
+	public LocalDateTime getAuctionStart() {
+		return auctionStart;
+	}
+
+	public void setAuctionStart(LocalDateTime auctionStart) {
+		this.auctionStart = auctionStart;
+	}
+
+	public LocalDateTime getAuctionEnd() {
+		return auctionEnd;
+	}
+
+	public void setAuctionEnd(LocalDateTime auctionEnd) {
+		this.auctionEnd = auctionEnd;
+	}
+
+	public LocalDateTime getCreated() {
+		return created;
+	}
+
+	public LocalDateTime getUpdated() {
+		return updated;
 	}
 }
