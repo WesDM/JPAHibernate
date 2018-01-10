@@ -8,6 +8,8 @@ public interface UserDao extends GenericDao<User, Long> {
 
 	int[][] batchInsertJDBC(List<User> users, int batchSize);
 
+	int deleteAll();
+
 }
 
 //public interface UserDao extends JpaRepository<User, Long>{

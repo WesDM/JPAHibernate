@@ -15,7 +15,10 @@ public interface ItemDao extends GenericDao<Item, Long> {
 
 	Item findByIdWithBids(Long id);
 
-	List<Item> findAllWithBidsHql();
+
+	List<Item> findAllHql(boolean withBids);
+
+	List<ItemBidSummary> findSummaries();
 
 }
 

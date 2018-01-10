@@ -2,7 +2,7 @@ package com.wesdm.JPAHibernateTest.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class ItemBidSummary implements Serializable {
 
@@ -10,12 +10,12 @@ public class ItemBidSummary implements Serializable {
 
     protected String name;
 
-    protected Date auctionEnd;
+    protected LocalDateTime auctionEnd;
 
     protected BigDecimal highestBid;
 
     public ItemBidSummary(Long itemId, String name,
-                          Date auctionEnd, BigDecimal highestBid) {
+                          LocalDateTime auctionEnd, BigDecimal highestBid) {
         this.itemId = itemId;
         this.name = name;
         this.auctionEnd = auctionEnd;
@@ -30,7 +30,7 @@ public class ItemBidSummary implements Serializable {
         return name;
     }
 
-    public Date getAuctionEnd() {
+    public LocalDateTime getAuctionEnd() {
         return auctionEnd;
     }
 

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -71,9 +72,8 @@ public class ItemService {
 			bid.setBidder(userDao.findReferenceById(userId));
 			item.addBid(bid);
 			LOGGER.info("place bid finished");
-		}
-		else {
-		LOGGER.info("auction has ended");
+		} else {
+			LOGGER.info("auction has ended");
 		}
 	}
 
@@ -84,16 +84,19 @@ public class ItemService {
 	public Item getItemWithBids(Long id) {
 		return itemDao.findByIdWithBids(id);
 	}
-	
+
 	public void endAuction(Item item) {
 		item = itemDao.getEntityManager().merge(item);
 		item.setBuyer(bidDao.getHighestBidder(item));
 	}
-	
-	//made to test with Item.Bids @BatchSize enabled
+
 	public void logBidAmounts() {
-		Set<Item> items = new LinkedHashSet<Item>(itemDao.findAllWithBidsHql());
-		for(Item item : items)
-			LOGGER.info(item.getBids().size());
+		List<Item> items = itemDao.findAllHql(true);
+		// Set<Item> items = new LinkedHashSet<>(itemDao.findAllHql(true)); //get rid of dupes
+		LOGGER.info(items.size());
+		// for(Item item : items)
+		// LOGGER.info(item.getBids().size());
 	}
+
+
 }

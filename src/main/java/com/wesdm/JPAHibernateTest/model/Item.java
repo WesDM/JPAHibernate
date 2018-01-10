@@ -19,8 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-
-import org.hibernate.annotations.BatchSize;
+import javax.persistence.Transient;
 
 @Entity
 public class Item {
@@ -81,7 +80,16 @@ public class Item {
 	@Column(name = "MODIFIED_ON")
 	@org.hibernate.annotations.UpdateTimestamp
 	private LocalDateTime updated;
-
+	
+//	@org.hibernate.annotations.Formula(
+//	        "coalesce((select max(b.AMOUNT) from BID b where b.ITEM_ID = ID), 0)"
+//	    )
+//	@Transient
+//	private BigDecimal maxBidAmount;	
+//
+//	public BigDecimal getMaxBidAmount() {
+//		return maxBidAmount;
+//	}
 
 	public Item() {
 	}

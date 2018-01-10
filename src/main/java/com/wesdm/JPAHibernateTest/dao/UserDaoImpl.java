@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.wesdm.JPAHibernateTest.model.User;
 
-@Repository
+@Repository("userDao")
 public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
 	
 	private JdbcTemplate jdbcTemplate;
@@ -45,4 +45,11 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
 
         return updateCounts;
 	}
+
+	@Override
+	public int deleteAll() {
+		return em.createQuery("DELETE FROM User").executeUpdate();
+	}
+	
+	
 }

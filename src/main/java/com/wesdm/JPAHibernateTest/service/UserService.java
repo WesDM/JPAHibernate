@@ -65,4 +65,9 @@ public class UserService {
 		}
 		userDao.batchInsertJDBC(users, batchSize);
 	}
+
+
+	public int deleteAll() {
+		return userDao.deleteAll();
+	}
 }

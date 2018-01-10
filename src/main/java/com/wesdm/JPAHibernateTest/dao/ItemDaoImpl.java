@@ -36,8 +36,12 @@ public class ItemDaoImpl extends GenericDaoImpl<Item, Long> implements ItemDao {
 	}
 	
 	@Override
-	public List<Item> findAllWithBidsHql(){
-		return em.createQuery("select i from Item i inner join i.bids").getResultList();
+	public List<Item> findAllHql(boolean withBids){
+		String sql = "select i from Item i";
+		if(withBids) {
+			sql += " left join fetch i.bids";
+		}
+		return em.createQuery(sql,Item.class).getResultList();
 	}
 	
 	@Override
@@ -63,5 +67,14 @@ public class ItemDaoImpl extends GenericDaoImpl<Item, Long> implements ItemDao {
 		criteria.orderBy(cb.asc(i.get("auctionEnd")));
 		criteria.groupBy(i.get("id"), i.get("name"), i.get("auctionEnd"));
 		return em.createQuery(criteria).getResultList();
+	}
+	
+	@Override
+	public List<ItemBidSummary> findSummaries(){
+		//DTO (data transfer objects) are good for read only queries
+		String sql = "select new com.wesdm.JPAHibernateTest.model.ItemBidSummary(i.id, i.name, i.auctionEnd, max(b.amount))"
+				+ "from Item i left join i.bids b on i.id=b.item.id group by i.id";
+		
+		return em.createQuery(sql, ItemBidSummary.class).getResultList();
 	}
 }
