@@ -23,9 +23,9 @@ public class BidDaoImpl extends GenericDaoImpl<Bid, Long> implements BidDao {
 	}
 
 	@Override
-	public User getHighestBidder(Item item) {
-		User highest = em.createQuery("select u from Bid b join b.bidder u where b.item.id = :itemId order by b.amount desc", User.class)
-				.setParameter("itemId", item.getId()).setMaxResults(1).getSingleResult();
+	public Long getHighestBidder(Long id) {
+		Long highest = em.createQuery("select u.id from Bid b join b.bidder u where b.item.id = :itemId order by b.amount desc", Long.class)
+				.setParameter("itemId", id).setMaxResults(1).getSingleResult();
 		return highest;
 	}
 }

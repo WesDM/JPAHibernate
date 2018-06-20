@@ -10,5 +10,5 @@ public interface BidDao extends GenericDao<Bid,Long>{
 
 	BigDecimal getHighestBidAmount(Item item);
 
-	User getHighestBidder(Item item);
+	Long getHighestBidder(Long id);
 }

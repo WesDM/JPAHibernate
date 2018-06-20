@@ -6,10 +6,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-@PropertySource("classpath:dbexample.properties")  //required to register properties with Environment
+@PropertySource("classpath:dbexample.properties") // required to register properties with Environment
 public class AppConfig {
-	   @Bean
-	   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-	      return new PropertySourcesPlaceholderConfigurer();
-	   }
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
+
 }
