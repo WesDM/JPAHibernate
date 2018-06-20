@@ -23,17 +23,17 @@ import javax.persistence.UniqueConstraint;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR_POOLED")
-	@org.hibernate.annotations.GenericGenerator(name = "ID_GENERATOR_POOLED", strategy = "enhanced-sequence",
-			parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "users_seq"),
-					@org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
-					@org.hibernate.annotations.Parameter(name = "increment_size", value = "25"),
-					@org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled-lo") })
-//	 @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
-//	 @SequenceGenerator(name = "sequence_generator", sequenceName = "users_seq", allocationSize = 25)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR_POOLED")
+//	@org.hibernate.annotations.GenericGenerator(name = "ID_GENERATOR_POOLED", strategy = "enhanced-sequence",
+//			parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "users_seq"),
+//					@org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
+//					@org.hibernate.annotations.Parameter(name = "increment_size", value = "30"),
+//					@org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled-lo") })
+	 @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
+	 @SequenceGenerator(name = "sequence_generator", sequenceName = "users_seq",allocationSize = 30)//sequenceName = "users_seq",
 	protected Long id;
 
-	// DO WE NEED MAP THE FOLLOWING IF WE CAN WRITE QUERIES TO GET THEM?
+	// ASK OURSELVES, DO WE REALLY NEED MAP THE FOLLOWING IF WE CAN WRITE QUERIES TO GET THEM?  Maybe postpone this mapping until later.
 	// @OneToMany(mappedBy = "bidder", fetch = FetchType.LAZY)
 	// protected Set<Bid> bids = new HashSet<>();
 	//
