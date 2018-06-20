@@ -35,14 +35,14 @@ public class JpaHibernateTestApplication {
 		userService.batchInsert(batchSize, numOfEntities);
 		itemService.batchInsert(batchSize, numOfEntities);
 
-		Item item = placeBidsOnItems(itemService, 3, 9);
+		placeBidsOnItems(itemService, 3, 9);
 		
-		for(ItemBidSummary s : itemDao.findSummaries()) {
-			LOGGER.info(s);
-		}
+//		for(ItemBidSummary s : itemDao.findSummaries()) {
+//			LOGGER.info(s);
+//		}
 		//itemService.logBidAmounts();
 
-		itemService.endAuction(item);
+		itemService.endAuction(3);
 
 		final long endTime = System.currentTimeMillis();
 
@@ -60,15 +60,15 @@ public class JpaHibernateTestApplication {
 		}
 	}
 
-	private static Item placeBidsOnItems(ItemService itemService, int numOfItems, int numOfBids) {
-		Item item = null;
+	private static void placeBidsOnItems(ItemService itemService, int numOfItems, int numOfBids) {
+		
 		for (int i = 1; i <= numOfItems; i++) {
 			for (int j = 1; j <= numOfBids; j++) {
-				item = itemService.getItemWithBids((long) i);
-				itemService.placeBid(item, BigDecimal.valueOf(3.00 + j), (long) j);
+				///item = itemService.getItemWithBids((long) i);
+				itemService.placeBid(i, BigDecimal.valueOf(3.00 + j), (long) j);
 			}
 		}
-		return item;
+		
 	}
 
 }
