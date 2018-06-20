@@ -1,11 +1,14 @@
 package com.wesdm.JPAHibernateTest.dao;
 
+import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
-import java.io.Serializable;
-import java.util.List;
+
+import org.hibernate.Session;
 
 public abstract class GenericDaoImpl<T, ID extends Serializable>
     implements GenericDao<T, ID> {
@@ -73,6 +76,10 @@ public abstract class GenericDaoImpl<T, ID extends Serializable>
                 ? LockModeType.OPTIMISTIC_FORCE_INCREMENT
                 : LockModeType.OPTIMISTIC
         );
+    }
+    
+    public Session unwrapSession() {
+    	return em.unwrap(Session.class);
     }
 }
 

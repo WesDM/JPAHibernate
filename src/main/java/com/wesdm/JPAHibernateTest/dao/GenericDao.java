@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 
+import org.hibernate.Session;
+
 /**
  * An interface shared by all business data access objects.
  * <p>
@@ -40,4 +42,6 @@ public interface GenericDao<T, ID extends Serializable>
     void makeTransient(T entity);
 
     void checkVersion(T entity, boolean forceUpdate);
+    
+    Session unwrapSession();
 }
