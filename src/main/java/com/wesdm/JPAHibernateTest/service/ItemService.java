@@ -61,9 +61,10 @@ public class ItemService {
 		itemDao.getEntityManager().clear();
 	}
 
-	public void placeBid(Item item, BigDecimal bidAmount, Long userId) {
+	public void placeBid(int i, BigDecimal bidAmount, Long userId) {
+		Item item = getItemWithBids((long) i);
 		if (!item.hasAuctionEnded()) {
-			item = itemDao.getEntityManager().merge(item);
+			//item = itemDao.getEntityManager().merge(item);
 			Bid bid = item.placeBid(bidDao.getHighestBidAmount(item), bidAmount);
 			if (bid == null) {
 				LOGGER.info("Bid was too low");
@@ -85,9 +86,10 @@ public class ItemService {
 		return itemDao.findByIdWithBids(id);
 	}
 
-	public void endAuction(Item item) {
-		item = itemDao.getEntityManager().merge(item);
-		item.setBuyer(bidDao.getHighestBidder(item));
+	public void endAuction(int id) {
+		//item = itemDao.getEntityManager().merge(item);
+		Item item = getItem((long) id);
+		item.setBuyer(userDao.findReferenceById(bidDao.getHighestBidder((long) id)));
 	}
 
 	public void logBidAmounts() {
