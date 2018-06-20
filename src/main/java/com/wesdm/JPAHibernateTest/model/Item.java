@@ -19,25 +19,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-import javax.persistence.Transient;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Version;
 
 @Entity
 public class Item {
 
 	@Id			//designates PK
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR_POOLED")
-	@org.hibernate.annotations.GenericGenerator(name = "ID_GENERATOR_POOLED", strategy = "enhanced-sequence",
-			parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "item_seq"),
-					@org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
-					@org.hibernate.annotations.Parameter(name = "increment_size", value = "25"),
-					@org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled-lo") })
-	// @SequenceGenerator(name = "sequence_generator", sequenceName = "item_seq", allocationSize = 5) can't use pooled or pooled-lo optimizers with
-	// @SequenceGenerator
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR_POOLED")
+//	@org.hibernate.annotations.GenericGenerator(name = "ID_GENERATOR_POOLED", strategy = "enhanced-sequence",
+//			parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "item_seq"),
+//					@org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
+//					@org.hibernate.annotations.Parameter(name = "increment_size", value = "30"),
+//					@org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled-lo") })
+	 @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
+	 @SequenceGenerator(name = "sequence_generator", sequenceName = "item_seq", allocationSize = 30)//sequenceName = "item_seq", 
 	private Long id;
 
 	private String name;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "IMAGE", joinColumns = @JoinColumn(name = "item_id")) // overrides default name for table to IMAGE
 	@OrderColumn(name = "index_id") //used so Hibernate can sort insertion order after fetching. what about using timestamp to sort?
 	//@OrderBy("filename, width DESC")  //executed at sql level, ordered in DB
@@ -45,7 +46,7 @@ public class Item {
 	private Set<Image> images = new HashSet<Image>();
 	
 	//@BatchSize(size=2)
-	@OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST}, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Bid> bids = new HashSet<>();
 
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
@@ -76,10 +77,14 @@ public class Item {
 	@Column(name = "CREATED_ON", updatable = false)
 	@org.hibernate.annotations.CreationTimestamp
 	private LocalDateTime created;
-
+	
+	@Version
 	@Column(name = "MODIFIED_ON")
 	@org.hibernate.annotations.UpdateTimestamp
 	private LocalDateTime updated;
+	
+//	@Version
+//	protected long version;
 	
 //	@org.hibernate.annotations.Formula(
 //	        "coalesce((select max(b.AMOUNT) from BID b where b.ITEM_ID = ID), 0)"
